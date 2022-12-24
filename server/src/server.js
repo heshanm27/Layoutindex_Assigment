@@ -41,7 +41,7 @@ const StartServer = function () {
 
   /** Api routes */
 
-  app.use("/api/category", require("./routes/category.route"));
+  app.use("/api/category", require("./routes/caregory.route"));
   app.use("/api/product", require("./routes/product.route"));
 
   /** Error handler */

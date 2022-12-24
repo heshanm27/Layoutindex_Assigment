@@ -16,11 +16,11 @@ const ProductSchema = new mongoose.Schema(
       required: true,
     },
     productImage: {
-      type: Array[String],
+      type: [String],
       default: [],
     },
     productCategory: {
-      type: mongoose.schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       required: true,
     },
