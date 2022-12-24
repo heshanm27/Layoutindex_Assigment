@@ -33,12 +33,19 @@ DBConnetion(process.env.MONGO_URI)
 
 const StartServer = function () {
   //**Routes */
+
   /** Deafult route */
   app.get("/", (req, res) => {
     res.status(200).json({ msg: "Welcome to the API" });
   });
 
-  /** User routes */
+  /** Api routes */
+
+  app.use("/api/category", require("./routes/category.route"));
+  app.use("/api/product", require("./routes/product.route"));
+
+  /** Error handler */
+  app.use(require("./middleware/error.middleware"));
 
   const port = process.env.PORT || 8000;
 
