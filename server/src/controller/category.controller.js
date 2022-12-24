@@ -39,11 +39,51 @@ const GetCategoryById = async (req, res) => {
   }
 };
 
-const CreateCategory = async (req, res) => {};
+const CreateCategory = async (req, res) => {
+  try {
+    if (!req.body) throw new CustomError(400, "Category data is required");
 
-const UpdateCategory = async (req, res) => {};
+    const category = await Category.create(req.body);
 
-const DeleteCategory = async (req, res) => {};
+    res.status(201).json({
+      status: "success",
+      msg: "Category created successfully",
+      data: category,
+    });
+  } catch (error) {
+    throw new CustomError(400, error.message);
+  }
+};
+
+const UpdateCategory = async (req, res) => {
+  try {
+    const category = await Category.find({ _id: req.params.id }).exec();
+
+    if (!category) throw new CustomError(404, "Category not found");
+
+    const updatedCategory = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true }).exec();
+
+    res.status(200).json({
+      status: "success",
+      msg: "Category updated successfully",
+      data: updatedCategory,
+    });
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      throw new CustomError(400, error.message);
+    }
+  }
+};
+
+const DeleteCategory = async (req, res) => {
+  try {
+    const category = await Category.findByIdAndDelete(req.params.id).exec();
+
+    if (!category) throw new CustomError(404, "Category not found");
+  } catch (error) {
+    throw new CustomError(400, error.message);
+  }
+};
 
 module.exports = {
   GetAllCategories,
