@@ -1,4 +1,6 @@
 const Product = require("../model/product.model");
+const Upload = require("../middleware/uploadImages.middleware");
+const CustomError = require("../error/custom.error.js");
 
 const GetAllProducts = async (req, res) => {
   const products = await Product.find({
@@ -13,8 +15,23 @@ const GetProductById = async (req, res) => {
 };
 
 const CreateProduct = async (req, res) => {
-  const product = await Product.create(req.body);
-  res.status(201).json({ product });
+  console.log(req.body);
+  console.log(req.files);
+  res.status(201).json({ data: req.file.filename });
+  //   Upload(req, res, async (err) => {
+  //     if (err) {
+  //       return res.status(400).json({ error: err.message });
+  //     }
+  //     if (!req.body) return res.status(400).json({ error: "Product data is required" });
+  //     if (!req.file) return res.status(400).json({ error: "Image is required" });
+
+  //     console.log(req.file.filename);
+  //     res.status(201).json({ data: req.file.filename });
+
+  //     // const product = await Product.create(req.body);
+  //     // res.status(201).json({ product });
+  //   });
+  //   const product = await Product.create(req.body);
 };
 
 const UpdateProduct = async (req, res) => {
