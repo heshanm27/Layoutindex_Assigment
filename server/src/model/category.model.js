@@ -5,6 +5,11 @@ const CategorySchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
+
+    index: {
+      unique: true,
+      collation: { locale: "en", strength: 2 },
+    },
   },
   parent: {
     type: mongoose.Schema.Types.ObjectId,
