@@ -16,8 +16,8 @@ const ProductSchema = new mongoose.Schema(
       required: true,
     },
     productImage: {
-      type: [String],
-      default: [],
+      type: String,
+      default: "default.jpg",
     },
     productCategory: {
       type: [String],
