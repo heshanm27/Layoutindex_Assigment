@@ -20,9 +20,9 @@ const GetAllCategories = async (req, res) => {
 
 const GetSubCategories = async (req, res) => {
   try {
-    const categories = await Category.findById(
+    const categories = await Category.findOne(
       {
-        _id: req.params.id,
+        $or: [{ _id: req.params.id }, { categoryName: req.params.id }],
       },
       { _id: 1, productSubCategory: 1 }
     )
