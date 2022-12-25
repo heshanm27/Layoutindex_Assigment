@@ -19,9 +19,12 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       default: "default.jpg",
     },
-    productCategory: {
-      type: [String],
-    },
+    productCategory: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+      },
+    ],
   },
   { timestamps: true }
 );
