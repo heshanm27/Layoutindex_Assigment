@@ -2,21 +2,21 @@ const Product = require("../model/product.model");
 const CustomError = require("../error/custom.error.js");
 
 const GetParentCategoryProducts = async (req, res) => {
-  if (req.query.min || req.query.max) {
-    const products = await Product.find({
-      productPrice: { $gte: req.query.min, $lte: req.query.max },
-      productCategory: req.params.parent,
-    });
+  // if (req.query.min || req.query.max) {
+  //   const products = await Product.find({
+  //     productPrice: { $gte: req.query.min, $lte: req.query.max },
+  //     productCategory: req.params.parent,
+  //   });
 
-    return res.status(200).json({
-      status: "success",
-      msg: "",
-      data: products,
-    });
-  }
+  //   return res.status(200).json({
+  //     status: "success",
+  //     msg: "",
+  //     data: products,
+  //   });
+  // }
 
   const products = await Product.find({
-    productCategory: req.params.parent,
+    // productCategory: req.params.parent,
   });
 
   return res.status(200).json({
