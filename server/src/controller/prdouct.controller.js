@@ -67,7 +67,11 @@ const CreateProduct = async (req, res) => {
   console.log(req.body.productCategory);
   // console.log(JSON.parse(req.body.productCategory));
 
-  const subCategory = req.body.productSubCategoryo.split(",");
+  let subCategory = req.body.productSubCategory;
+
+  if (req.body.productSubCategory.includes(",")) {
+    subCategory = req.body.productSubCategory.split(",");
+  }
   try {
     const newProduct = new Product({
       productName: req.body.productName,
@@ -75,9 +79,10 @@ const CreateProduct = async (req, res) => {
       productDescription: req.body.productDescription,
       productCategory: req.body.productCategory,
       productSubCategory: subCategory,
+      productImage: req.file.filename,
     });
 
-    newProduct.productImage = req.file.filename;
+    // newProduct.productImage = req.file.filename;
 
     await newProduct.save();
 
@@ -95,6 +100,12 @@ const UpdateProduct = async (req, res) => {
   if (!req.body) return res.status(400).json({ error: "Product data is required" });
 
   try {
+    let subCategory = req.body.productSubCategory;
+
+    // if (req.body.productSubCategory.includes(",")) {
+    //   // subCategory = req.body.productSubCategory.split(",");
+    // }
+
     const updateproduct = await Product.findByIdAndUpdate(
       req.params.id,
       {
@@ -102,6 +113,7 @@ const UpdateProduct = async (req, res) => {
         productPrice: req.body.productPrice,
         productDescription: req.body.productDescription,
         productCategory: req.body.productCategory,
+        productSubCategory: subCategory,
         productImage: req.file?.filename,
       },
       { new: true, runValidators: true }
