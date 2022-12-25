@@ -21,8 +21,9 @@ export default function DrawerContent({ setProduct }) {
     console.log(newValue);
   };
 
-  const hadnleClickSubCategory = (aprentId, subId) => {
-    console.log(aprentId, subId);
+  const hadnleClickSubCategory = (parentId, subcategorey) => {
+    const { data } = AxiosRequest.get(`/product/${parentId}/${subcategorey}`);
+    setProduct(data.data);
   };
 
   useEffect(() => {
@@ -48,13 +49,13 @@ export default function DrawerContent({ setProduct }) {
             <Box key={index}>
               <ListItemButton onClick={() => handleClick(category._id)}>
                 <ListItemText primary={category.categoryName} />
-                {category.sub && openCategory ? <ExpandLess /> : <ExpandMore />}
+                {category.sub.length !== 0 && openCategory ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
               <Collapse in={openCategory === category._id} timeout="auto" unmountOnExit key={category._id + category.sub._id}>
                 <List component="ul">
                   {category.sub &&
                     category.sub.map((subCategory, index) => (
-                      <ListItemButton onClick={() => hadnleClickSubCategory(category._id, subCategory._id)} key={subCategory._id + index}>
+                      <ListItemButton onClick={() => hadnleClickSubCategory(category._id, subCategory.categoryName)} key={subCategory._id + index}>
                         <ListItemText primary={subCategory.categoryName} />
                       </ListItemButton>
                     ))}
