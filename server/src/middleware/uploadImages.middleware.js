@@ -9,7 +9,7 @@ const Storage = multer.diskStorage({
     cb(null, unquiePrefix + "-" + file.originalname);
   },
 });
-
+console.log("uploadImages.middleware.js");
 const Upload = multer({
   storage: Storage,
 });

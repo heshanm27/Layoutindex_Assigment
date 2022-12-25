@@ -95,10 +95,10 @@ export default function ResponsiveDrawer({ setProduct }) {
       </Box>
 
       <CustomeDialog title={"Add New Categorey"} open={openCategoryDialog} setOpen={setOpenCategoryDialog}>
-        <CategoryForm />
+        <CategoryForm setOpen={setOpenCategoryDialog} />
       </CustomeDialog>
       <CustomeDialog title={"Add New Product"} open={openproductDialog} setOpen={setOpenProductDialog}>
-        <ProductFrom />
+        <ProductFrom setOpen={setOpenProductDialog} />
       </CustomeDialog>
     </Box>
   );

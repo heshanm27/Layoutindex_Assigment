@@ -20,16 +20,9 @@ const ProductSchema = new mongoose.Schema(
       default: "default.jpg",
     },
     productCategory: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
+      type: String,
     },
-
-    productSubCategory: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Category",
-      },
-    ],
+    productSubCategory: [String],
   },
   { timestamps: true }
 );

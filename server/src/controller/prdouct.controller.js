@@ -64,14 +64,17 @@ const GetProductById = async (req, res) => {
 const CreateProduct = async (req, res) => {
   if (!req.body) return res.status(400).json({ error: "Product data is required" });
   if (!req.file) return res.status(400).json({ error: "Image is required" });
-
+  console.log(req.body.productCategory);
   // console.log(JSON.parse(req.body.productCategory));
+
+  const subCategory = req.body.productSubCategoryo.split(",");
   try {
     const newProduct = new Product({
       productName: req.body.productName,
       productPrice: req.body.productPrice,
       productDescription: req.body.productDescription,
       productCategory: req.body.productCategory,
+      productSubCategory: subCategory,
     });
 
     newProduct.productImage = req.file.filename;

@@ -8,7 +8,7 @@ export default function CustomCard({ item }) {
   });
 
   return (
-    <Card sx={{ minWidth: 275 }}>
+    <Card sx={{ width: 285 }}>
       <CardActionArea>
         <CardMedia
           component="img"

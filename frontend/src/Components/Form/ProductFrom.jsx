@@ -13,12 +13,13 @@ const initProduct = {
   productImage: "",
 };
 
-export default function ProductFrom() {
+export default function ProductFrom({ setOpen }) {
   const [product, setProduct] = useState(initProduct);
   const [error, setErrors] = useState(false);
   const [image, setImage] = useState(null);
   const [mainCategorey, setMainCategorey] = useState([]);
   const [subCategoreies, setSubCategoreies] = useState();
+  const [subOptionCategorey, setsubOptionCategorey] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export default function ProductFrom() {
     temp.productPrice = (product.productPrice === "" ? "Please product price" : "") || (product.productPrice < 0 ? "Please enter valid price" : "");
     temp.productDescription = product.productDescription === "" ? "Please enter product discription" : "";
     temp.productCategory = product.productCategory === "" ? "Please select product category" : "";
-    temp.productSubCategory = product.productSubCategory.length === 0 ? "Please select product sub category" : "";
+    temp.productSubCategory = subOptionCategorey.length === 0 ? "Please select product sub category" : "";
     setErrors({
       ...temp,
     });
@@ -82,10 +83,7 @@ export default function ProductFrom() {
 
   //handle sub categorey change
   const handleSubCategoreyChange = (event) => {
-    setProduct((prev) => ({
-      ...prev,
-      productSubCategory: [...prev.productSubCategory, event.target.value],
-    }));
+    setsubOptionCategorey(event.target.value);
   };
 
   //handle submit
@@ -97,13 +95,20 @@ export default function ProductFrom() {
       formData.append("productPrice", product.productPrice);
       formData.append("productDescription", product.productDescription);
       formData.append("productCategory", product.productCategory);
-      formData.append("productSubCategory", product.productSubCategory);
+      formData.append("productSubCategory", subOptionCategorey);
       formData.append("productImage", product.productImage);
 
-      for (var pair of formData.entries()) {
-        console.log(pair[0] + ", " + pair[1]);
-      }
-      console.log(formData);
+      AxiosRequest.post("/product", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+        .then((response) => {
+          setOpen(false);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
 
     // axios.post('/api/products', formData, {
@@ -118,7 +123,7 @@ export default function ProductFrom() {
   };
   return (
     <Container sx={{ mt: 2 }}>
-      <form onSubmit={handleSubmit}>
+      <form enctype="multipart/form-data" onSubmit={handleSubmit}>
         <Stack direction="column" spacing={2}>
           <FormControl>
             <TextField
@@ -178,7 +183,7 @@ export default function ProductFrom() {
             <Select
               labelId="category-label"
               multiple
-              value={product.productSubCategory}
+              value={subOptionCategorey}
               onChange={handleSubCategoreyChange}
               renderValue={(selected) => (
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
@@ -190,7 +195,7 @@ export default function ProductFrom() {
             >
               {subCategoreies &&
                 subCategoreies.map((item) => (
-                  <MenuItem key={item._id} value={item.categoryName}>
+                  <MenuItem key={item.categoryName} value={item.categoryName}>
                     {item.categoryName}
                   </MenuItem>
                 ))}
@@ -203,6 +208,7 @@ export default function ProductFrom() {
               <Input
                 fullWidth
                 color="primary"
+                name="productImage"
                 sx={{ mt: 2, mb: 2 }}
                 type="file"
                 inputProps={{ accept: "image/jpg, image/png, image/jpeg" }}
