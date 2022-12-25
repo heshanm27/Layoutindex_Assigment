@@ -33,6 +33,11 @@ export default function ProductFrom({ setOpen, existingProduct }) {
       setProduct(existingProduct);
       console.log(existingProduct.productSubCategory);
       setsubOptionCategorey(existingProduct.productSubCategory);
+
+      (async () => {
+        const { data } = await AxiosRequest.get(`category/${existingProduct.productCategory}/sub`);
+        setSubCategoreies(data.data.sub);
+      })();
     }
   }, []);
 
@@ -80,9 +85,6 @@ export default function ProductFrom({ setOpen, existingProduct }) {
 
   //handle main categorey change
   const handleMainCategoreyChange = async (event) => {
-    if (existingProduct) {
-      const { data } = await AxiosRequest.get(`category/${event.target.value}/sub`);
-    }
     setProduct((prev) => ({
       ...prev,
       productCategory: event.target.value,
