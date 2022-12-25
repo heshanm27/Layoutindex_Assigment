@@ -18,14 +18,18 @@ const GetAllCategories = async (req, res) => {
   }
 };
 
-const GetCategoryById = async (req, res) => {
+const GetSubCategories = async (req, res) => {
   try {
-    const categories = await Category.find({
-      _id: req.params.id,
-    })
+    const categories = await Category.findById(
+      {
+        _id: req.params.id,
+      },
+      { _id: 1, productSubCategory: 1 }
+    )
       .populate("sub", { _id: 1, categoryName: 1 })
       .exec();
 
+    console.log(categories);
     if (!categories) {
       return res.status(404).json({
         status: "fail",
@@ -148,7 +152,7 @@ const DeleteCategory = async (req, res) => {
 
 module.exports = {
   GetAllCategories,
-  GetCategoryById,
+  GetSubCategories,
   CreateCategory,
   UpdateCategory,
   DeleteCategory,
