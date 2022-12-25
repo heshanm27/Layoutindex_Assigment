@@ -12,8 +12,9 @@ import Typography from "@mui/material/Typography";
 import { Button, useTheme } from "@mui/material";
 import DrawerContent from "./DrawerContent";
 import CustomeDialog from "../Dialog/CustomDialog";
-import CategoryForm from "../Form/CategoryForm";
+import CategoryForm from "../Form/SubCategoryForm";
 import ProductFrom from "../Form/ProductFrom";
+import CustomTabs from "../Tabs/Tabs";
 
 const drawerWidth = 240;
 
@@ -95,7 +96,7 @@ export default function ResponsiveDrawer({ setProduct }) {
       </Box>
 
       <CustomeDialog title={"Add New Categorey"} open={openCategoryDialog} setOpen={setOpenCategoryDialog}>
-        <CategoryForm setOpen={setOpenCategoryDialog} />
+        <CustomTabs />
       </CustomeDialog>
       <CustomeDialog title={"Add New Product"} open={openproductDialog} setOpen={setOpenProductDialog}>
         <ProductFrom setOpen={setOpenProductDialog} />
