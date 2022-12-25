@@ -10,7 +10,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { Outlet } from "react-router";
 import { AxiosRequest } from "../../Utils/DefaultAxios";
-import { Checkbox, FormControlLabel, Radio, RadioGroup, useTheme } from "@mui/material";
+import { Button, Checkbox, FormControlLabel, Radio, RadioGroup, useTheme } from "@mui/material";
 import DrawerContent from "./DrawerContent";
 
 const drawerWidth = 240;
@@ -33,13 +33,17 @@ export default function ResponsiveDrawer({ setProduct }) {
           ml: { sm: `${drawerWidth}px` },
         }}
       >
-        <Toolbar sx={{ ...theme.mixins.toolbar }}>
+        <Toolbar sx={{ ...theme.mixins.toolbar, justifyContent: "space-between" }}>
           <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2, display: { sm: "none" } }}>
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
             Layout Index
           </Typography>
+          <Box sx={{ display: { xs: "none", sm: "flex" } }}>
+            <Button sx={{ color: "white" }}>Manage Category</Button>
+            <Button sx={{ color: "white" }}>Manage Product</Button>
+          </Box>
         </Toolbar>
       </AppBar>
 
@@ -57,7 +61,13 @@ export default function ResponsiveDrawer({ setProduct }) {
             "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
           }}
         >
-          <DrawerContent setProduct />
+          <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+            <DrawerContent setProduct />
+            <div>
+              <Button>Manage Category</Button>
+              <Button>Manage Product</Button>
+            </div>
+          </Box>
         </Drawer>
 
         {/* Desktop Drawer */}
