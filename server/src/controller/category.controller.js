@@ -3,14 +3,18 @@ const CustomError = require("../error/custom.error.js");
 
 const GetAllCategories = async (req, res) => {
   try {
-    const categories = await Category.find({}).populate("sub", { _id: 1, categoryName: 1 }).exec();
+    const categories = await Category.find({
+      parent: null,
+    })
+      .populate("sub", { _id: 1, categoryName: 1 })
+      .exec();
     res.status(200).json({
       status: "success",
       msg: "",
       data: categories,
     });
   } catch (error) {
-    throw new CustomError(error._message, 400);
+    throw new CustomError(error.message, 400);
   }
 };
 
@@ -36,7 +40,7 @@ const GetCategoryById = async (req, res) => {
       data: categories,
     });
   } catch (error) {
-    throw new CustomError(error._message, 400);
+    throw new CustomError(error.message, 400);
   }
 };
 
@@ -53,8 +57,9 @@ const CreateCategory = async (req, res) => {
       data: category,
     });
   } catch (error) {
+    console.log(error.code);
     if (error.name === "ValidationError") {
-      throw new CustomError(error._message, 400);
+      throw new CustomError(error.message, 400);
     }
     if (error.code === 11000) {
       throw new CustomError("Category already exists", 400);
@@ -92,7 +97,7 @@ const CreateSubCategory = async (req, res) => {
     });
   } catch (error) {
     if (error.name === "ValidationError") {
-      throw new CustomError(error._message, 400);
+      throw new CustomError(error.message, 400);
     }
     if (error.code === 11000) {
       throw new CustomError("Category already exists", 400);
@@ -116,7 +121,7 @@ const UpdateCategory = async (req, res) => {
     });
   } catch (error) {
     if (error.name === "ValidationError") {
-      throw new CustomError(error._message, 400);
+      throw new CustomError(error.message, 400);
     }
     throw new CustomError(error.message, 400);
   }
