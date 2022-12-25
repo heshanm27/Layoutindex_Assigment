@@ -1,9 +1,9 @@
 import { Box, Button, Chip, CircularProgress, Container, FormControl, FormHelperText, Input, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { Stack } from "@mui/system";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { AxiosRequest } from "../../Utils/DefaultAxios";
 import { useEffect } from "react";
-
+import { FetchContext } from "../../Contexts/FeatchContext";
 const initProduct = {
   productName: "",
   productPrice: "",
@@ -14,6 +14,7 @@ const initProduct = {
 };
 
 export default function ProductFrom({ setOpen, existingProduct }) {
+  const { setRefetch, setNotify } = useContext(FetchContext);
   const [product, setProduct] = useState(initProduct);
   const [error, setErrors] = useState(false);
   const [image, setImage] = useState(null);
@@ -120,7 +121,7 @@ export default function ProductFrom({ setOpen, existingProduct }) {
         })
           .then((response) => {
             setLoading(false);
-
+            setRefetch((prev) => !prev);
             setOpen(false);
           })
           .catch((error) => {
@@ -135,12 +136,21 @@ export default function ProductFrom({ setOpen, existingProduct }) {
         })
           .then((response) => {
             setLoading(false);
-
+            setNotify({
+              isOpen: true,
+              message: "New product successfuly added",
+              type: "success",
+            });
             setOpen(false);
           })
-          .catch((error) => {
+          .catch((response) => {
             setLoading(false);
             console.error(error);
+            setNotify({
+              isOpen: true,
+              message: response.data.error,
+              type: "error",
+            });
           });
       }
     }
