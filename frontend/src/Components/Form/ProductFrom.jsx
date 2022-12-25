@@ -59,7 +59,7 @@ export default function ProductFrom({ setOpen, existingProduct }) {
     temp.productPrice = (product.productPrice === "" ? "Please product price" : "") || (product.productPrice < 0 ? "Please enter valid price" : "");
     temp.productDescription = product.productDescription === "" ? "Please enter product discription" : "";
     temp.productCategory = product.productCategory === "" ? "Please select product category" : "";
-    temp.productSubCategory = subOptionCategorey.length === 0 ? "Please select product sub category" : "";
+
     setErrors({
       ...temp,
     });
@@ -224,7 +224,6 @@ export default function ProductFrom({ setOpen, existingProduct }) {
                   </MenuItem>
                 ))}
             </Select>
-            {error.productSubCategory ? <FormHelperText error>{error.productSubCategory}</FormHelperText> : null}
           </FormControl>
 
           <div>
