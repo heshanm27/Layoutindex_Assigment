@@ -97,7 +97,7 @@ export default function ResponsiveDrawer() {
 
       {/* Custome Dialogs */}
       <CustomeDialog title={"Add New Categorey"} open={openCategoryDialog} setOpen={setOpenCategoryDialog}>
-        <CustomTabs />
+        <CustomTabs setOpen={setOpenCategoryDialog} />
       </CustomeDialog>
       <CustomeDialog title={"Add New Product"} open={openproductDialog} setOpen={setOpenProductDialog}>
         <ProductFrom setOpen={setOpenProductDialog} />
