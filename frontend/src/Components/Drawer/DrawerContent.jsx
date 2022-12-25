@@ -6,29 +6,44 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import { FetchContext } from "../../Contexts/FeatchContext";
 import { useContext } from "react";
 import { Stack } from "@mui/system";
-function valuetext(value) {
-  return `${value}°C`;
-}
+
 export default function DrawerContent() {
   const [categorIes, setCategories] = useState([]);
   const [openCategory, setOpenCategory] = useState("");
+  const [curruntCategory, setCurrentCategory] = useState({
+    parent: "",
+    sub: "",
+  });
+  const [refetch, setRefetch] = useState(false);
 
   const [filter, setFilter] = useState([0, 60000]);
 
-  const { setProduct, setLoading } = useContext(FetchContext);
+  const { setProduct, setLoading, setNotify } = useContext(FetchContext);
 
   const handleClick = async (id) => {
+    setCurrentCategory({
+      sub: "",
+      parent: id,
+    });
+
     setLoading(true);
     setOpenCategory((prev) => (prev !== id ? id : ""));
     try {
       const { data } = await AxiosRequest.get(`/product/${id}`);
       setProduct(data.data);
       setLoading(false);
-    } catch (error) {
+    } catch ({ response }) {
       setLoading(false);
+
+      setNotify({
+        isOpen: true,
+        message: response.data.error,
+        type: "error",
+      });
     }
   };
 
+  //handle range and filter
   const handleRangeChange = (event, newValue, activeThumb) => {
     if (!Array.isArray(newValue)) {
       return;
@@ -38,16 +53,59 @@ export default function DrawerContent() {
     } else {
       setFilter([filter[0], Math.max(newValue[1], filter[0] + 500)]);
     }
+
+    if (curruntCategory.sub !== "") {
+      setTimeout(async () => {
+        try {
+          const { data } = await AxiosRequest.get(`/product/${curruntCategory.parent}/${curruntCategory.sub}?min=${filter[0]}&max=${filter[1]} `);
+          setProduct(data.data);
+          setLoading(false);
+        } catch ({ response }) {
+          setLoading(false);
+          setNotify({
+            isOpen: true,
+            message: response.data.error,
+            type: "error",
+          });
+        }
+      }, [200]);
+    } else {
+      setTimeout(async () => {
+        try {
+          const { data } = await AxiosRequest.get(`/product/${curruntCategory.parent}?min=${filter[0]}&max=${filter[1]} `);
+          setProduct(data.data);
+          setLoading(false);
+        } catch ({ response }) {
+          setLoading(false);
+          setNotify({
+            isOpen: true,
+            message: response.data.error,
+            type: "error",
+          });
+        }
+      }, [100]);
+    }
   };
 
+  //handle sub categorey
   const hadnleClickSubCategory = async (parentId, subcategorey) => {
+    setCurrentCategory({
+      sub: subcategorey,
+      parent: parentId,
+    });
+
     setLoading(true);
     try {
       const { data } = await AxiosRequest.get(`/product/${parentId}/${subcategorey}`);
       setProduct(data.data);
       setLoading(false);
-    } catch (error) {
+    } catch ({ response }) {
       setLoading(false);
+      setNotify({
+        isOpen: true,
+        message: response.data.error,
+        type: "error",
+      });
     }
   };
 
@@ -57,16 +115,20 @@ export default function DrawerContent() {
         const { data } = await AxiosRequest.get("/category");
         setCategories(data.data);
         handleClick(data.data[0]._id);
-      } catch (error) {
-        console.log(error);
+      } catch ({ response }) {
+        setNotify({
+          isOpen: true,
+          message: response.data.error,
+          type: "error",
+        });
       }
     })();
-  }, []);
+  }, [refetch]);
 
   return (
     <Box sx={{ p: 2 }}>
       <Divider />
-      <Typography sx={{ color: "gray", fontSize: 16, p: 2 }}>Category</Typography>
+      <Typography sx={{ fontSize: 16, p: 2 }}>Category</Typography>
       <Divider />
       <List key={5}>
         {categorIes &&
@@ -90,7 +152,7 @@ export default function DrawerContent() {
           ))}
       </List>
       <Divider />
-      <Box sx={{ mt: 10 }}>
+      <Box sx={{ mt: 2 }}>
         <Stack direction="column" justifyContent={"center"} sx={{ p: 2 }}>
           <Typography sx={{ mt: 2, mb: 2 }}>Price Filter</Typography>
           <Stack direction="row" justifyContent={"space-between"}>
@@ -98,7 +160,7 @@ export default function DrawerContent() {
             <span id="range-value-right">{"$" + filter[1]} </span>
           </Stack>
 
-          <Slider min={0} max={100000} value={filter} onChange={handleRangeChange} valueLabelDisplay="auto" getAriaValueText={valuetext} disableSwap />
+          <Slider min={0} max={100000} value={filter} onChange={handleRangeChange} disableSwap />
         </Stack>
       </Box>
     </Box>
