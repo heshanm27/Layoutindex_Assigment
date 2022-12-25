@@ -5,49 +5,84 @@ const { parse } = require("dotenv");
 
 const GetAllProducts = async (req, res) => {
   const products = await Product.find({
-    productCategory: req.params.category,
+    productCategory: req.query.cat,
   });
   res.status(200).json({ products });
 };
 
 const GetProductById = async (req, res) => {
-  const product = await Product.findById(req.params.id);
-  res.status(200).json({ product });
+  const reservedProduct = await Product.findById(req.params.id);
+
+  return res.status(200).json({
+    status: "success",
+    msg: "",
+    data: reservedProduct,
+  });
 };
 
 const CreateProduct = async (req, res) => {
   if (!req.body) return res.status(400).json({ error: "Product data is required" });
-  if (!req.files) return res.status(400).json({ error: "Image is required" });
+  if (!req.file) return res.status(400).json({ error: "Image is required" });
 
   try {
-    const product = new Product({
+    const newProduct = new Product({
       productName: req.body.productName,
       productPrice: req.body.productPrice,
       productDescription: req.body.productDescription,
       productCategory: req.body.productCategory,
     });
 
-    req.files.forEach((file) => {
-      product.productImage.push(file.filename);
+    newProduct.productImage = req.file.filename;
+
+    await newProduct.save();
+
+    return res.status(200).json({
+      status: "success",
+      msg: "New product created successfully",
+      data: newProduct,
     });
-
-    await product.save();
-
-    res.status(201).json({ product });
   } catch (error) {
     throw new CustomError(error.message, 400);
   }
 };
 
 const UpdateProduct = async (req, res) => {
-  const product = await Product.findByIdAndUpdate(req.params.id, req.body);
+  if (!req.body) return res.status(400).json({ error: "Product data is required" });
 
-  res.status(200).json({ product });
+  try {
+    const updateproduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      {
+        productName: req.body.productName,
+        productPrice: req.body.productPrice,
+        productDescription: req.body.productDescription,
+        productCategory: req.body.productCategory,
+        productImage: req.file?.filename,
+      },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json({
+      status: "success",
+      msg: "Product updated successfully",
+      data: updateproduct,
+    });
+  } catch (error) {
+    throw new CustomError(error.message, 400);
+  }
 };
 
 const DeleteProduct = async (req, res) => {
-  const product = await Product.findByIdAndDelete(req.params.id);
-  res.status(200).json({ product });
+  try {
+    await Product.findByIdAndDelete(req.params.id);
+    return res.status(200).json({
+      status: "success",
+      msg: "Product deleted successfully",
+      data: null,
+    });
+  } catch (error) {
+    throw new CustomError("Error occured while deleting", 400);
+  }
 };
 
 module.exports = {
