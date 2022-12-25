@@ -14,7 +14,7 @@ function TabPanel(props) {
   );
 }
 
-export default function CustomTabs() {
+export default function CustomTabs({ setOpen }) {
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
@@ -30,10 +30,10 @@ export default function CustomTabs() {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-        <ParentCategoryForm />
+        <ParentCategoryForm setOpen={setOpen} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <SubCategoryForm />
+        <SubCategoryForm setOpen={setOpen} />
       </TabPanel>
     </Container>
   );
