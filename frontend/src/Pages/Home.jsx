@@ -1,5 +1,12 @@
 import React from "react";
+import ResponsiveDrawer from "../Components/Drawer/Darwer";
 
 export default function Home() {
-  return <div>Home</div>;
+  const [products, setProduct] = React.useState([]);
+
+  return (
+    <>
+      <ResponsiveDrawer setProduct={setProduct} />
+    </>
+  );
 }
