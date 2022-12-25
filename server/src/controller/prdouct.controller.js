@@ -39,9 +39,10 @@ const GetSubCategoryProducts = async (req, res) => {
       data: products,
     });
   }
-
+  console.log("parent", req.params.parent);
+  console.log("sub", req.params.sub);
   const products = await Product.find({
-    productCategory: [req.params.parent, req.params.sub],
+    $and: [{ productCategory: req.params.parent }, { productSubCategory: req.params.sub }],
   });
 
   return res.status(200).json({
