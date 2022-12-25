@@ -18,7 +18,7 @@ import CustomTabs from "../Tabs/Tabs";
 
 const drawerWidth = 240;
 
-export default function ResponsiveDrawer({ setProduct }) {
+export default function ResponsiveDrawer() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const theme = useTheme();
   const [openproductDialog, setOpenProductDialog] = useState(false);
@@ -72,7 +72,7 @@ export default function ResponsiveDrawer({ setProduct }) {
           }}
         >
           <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-            <DrawerContent setProduct={setProduct} />
+            <DrawerContent />
             <div>
               <Button onClick={() => setOpenCategoryDialog(true)}>Manage Category</Button>
               <Button onClick={() => setOpenProductDialog(true)}>Manage Product</Button>
@@ -91,10 +91,11 @@ export default function ResponsiveDrawer({ setProduct }) {
           }}
           open
         >
-          <DrawerContent setProduct={setProduct} />
+          <DrawerContent />
         </Drawer>
       </Box>
 
+      {/* Custome Dialogs */}
       <CustomeDialog title={"Add New Categorey"} open={openCategoryDialog} setOpen={setOpenCategoryDialog}>
         <CustomTabs />
       </CustomeDialog>
