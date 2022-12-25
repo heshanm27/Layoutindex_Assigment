@@ -85,7 +85,7 @@ const CreateSubCategory = async (req, res) => {
 
     await parentCategory.save();
 
-    return res.status(201).json({
+    return res.status(200).json({
       status: "success",
       msg: "Sub category created successfully",
       data: newSubCategory,
