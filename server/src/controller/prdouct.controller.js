@@ -1,13 +1,54 @@
 const Product = require("../model/product.model");
-const Upload = require("../middleware/uploadImages.middleware");
 const CustomError = require("../error/custom.error.js");
-const { parse } = require("dotenv");
 
-const GetAllProducts = async (req, res) => {
+const GetParentCategoryProducts = async (req, res) => {
+  if (req.query.min || req.query.max) {
+    const products = await Product.find({
+      productPrice: { $gte: req.query.min, $lte: req.query.max },
+      productCategory: req.params.parent,
+    });
+
+    return res.status(200).json({
+      status: "success",
+      msg: "",
+      data: products,
+    });
+  }
+
   const products = await Product.find({
-    productCategory: req.query.cat,
+    productCategory: req.params.parent,
   });
-  res.status(200).json({ products });
+
+  return res.status(200).json({
+    status: "success",
+    msg: "",
+    data: products,
+  });
+};
+
+const GetSubCategoryProducts = async (req, res) => {
+  if (req.query.min || req.query.max) {
+    const products = await Product.find({
+      productPrice: { $gte: req.query.min, $lte: req.query.max },
+      productCategory: [req.params.parent, req.params.sub],
+    });
+
+    return res.status(200).json({
+      status: "success",
+      msg: "",
+      data: products,
+    });
+  }
+
+  const products = await Product.find({
+    productCategory: [req.params.parent, req.params.sub],
+  });
+
+  return res.status(200).json({
+    status: "success",
+    msg: "",
+    data: products,
+  });
 };
 
 const GetProductById = async (req, res) => {
@@ -24,6 +65,7 @@ const CreateProduct = async (req, res) => {
   if (!req.body) return res.status(400).json({ error: "Product data is required" });
   if (!req.file) return res.status(400).json({ error: "Image is required" });
 
+  // console.log(JSON.parse(req.body.productCategory));
   try {
     const newProduct = new Product({
       productName: req.body.productName,
@@ -86,7 +128,8 @@ const DeleteProduct = async (req, res) => {
 };
 
 module.exports = {
-  GetAllProducts,
+  GetParentCategoryProducts,
+  GetSubCategoryProducts,
   GetProductById,
   CreateProduct,
   UpdateProduct,
