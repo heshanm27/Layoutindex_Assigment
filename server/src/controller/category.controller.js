@@ -48,6 +48,20 @@ const GetSubCategories = async (req, res) => {
   }
 };
 
+const GetAllSubCategories = async (req, res) => {
+  try {
+    const categories = await Category.find({
+      parent: { $ne: null },
+    }).exec();
+    res.status(200).json({
+      status: "success",
+      msg: "",
+      data: categories,
+    });
+  } catch (error) {
+    throw new CustomError(error.message, 400);
+  }
+};
 const CreateCategory = async (req, res) => {
   try {
     if (!req.body) throw new CustomError("Category data is required", 400);
@@ -77,6 +91,7 @@ const CreateSubCategory = async (req, res) => {
     if (!req.body) throw new CustomError("Category data is required", 400);
     if (!req.params.id) throw new CustomError("Category id is required", 400);
 
+    console.log("Create sub categorey");
     //check if parent category exists
     const parentCategory = await Category.findById(req.params.id).exec();
 
@@ -90,7 +105,7 @@ const CreateSubCategory = async (req, res) => {
     const newSubCategory = await subCategory.save();
 
     //update parent sub categories
-    parentCategory.sub.push(newSubCategory._id);
+    parentCategory.productSubCategory.push(newSubCategory.categoryName);
 
     await parentCategory.save();
 
@@ -104,7 +119,7 @@ const CreateSubCategory = async (req, res) => {
       throw new CustomError(error.message, 400);
     }
     if (error.code === 11000) {
-      throw new CustomError("Category already exists", 400);
+      throw new CustomError("Sub Category already exists", 400);
     }
     throw new CustomError(error.message, 400);
   }
@@ -116,7 +131,14 @@ const UpdateCategory = async (req, res) => {
 
     if (!category) throw new CustomError("Category not found", 404);
 
-    const updatedCategory = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true }).exec();
+    const updatedCategory = await Category.findByIdAndUpdate(
+      req.params.id,
+      {
+        categoryName: req.body.categoryName,
+        $addToSet: { sub: req.body.subOptionCategorey },
+      },
+      { new: true, runValidators: true }
+    ).exec();
 
     res.status(200).json({
       status: "success",
@@ -157,4 +179,5 @@ module.exports = {
   UpdateCategory,
   DeleteCategory,
   CreateSubCategory,
+  GetAllSubCategories,
 };
