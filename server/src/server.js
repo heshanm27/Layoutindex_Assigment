@@ -43,8 +43,8 @@ const StartServer = function () {
   /**Static Route */
   const __dirname = path.resolve();
   app.use("/images", express.static(path.join(__dirname, "src/uploads")));
-  /** Api routes */
 
+  /** Api routes */
   app.use("/api/category", require("./routes/category.route"));
   app.use("/api/product", require("./routes/product.route"));
 
