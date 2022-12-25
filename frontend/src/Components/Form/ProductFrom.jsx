@@ -29,6 +29,7 @@ export default function ProductFrom({ setOpen, existingProduct }) {
       setMainCategorey(data.data);
     })();
 
+    //set existing product values to update
     if (existingProduct) {
       setProduct(existingProduct);
       console.log(existingProduct.productSubCategory);
@@ -239,6 +240,7 @@ export default function ProductFrom({ setOpen, existingProduct }) {
               />
               {error.productImage ? <FormHelperText error>{error.productImage}</FormHelperText> : null}
             </FormControl>
+            {/* if image is selected then show it else if existing product then show existing product image */}
             {imageUrl ? (
               <img height="25%" width="100%" src={imageUrl} alt="Selected" />
             ) : existingProduct ? (
