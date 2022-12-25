@@ -137,7 +137,7 @@ const DeleteCategory = async (req, res) => {
       data: null,
     });
   } catch (error) {
-    throw new CustomError(error.message, 400);
+    throw new CustomError("Error occured while deleting", 400);
   }
 };
 
