@@ -104,9 +104,9 @@ const UpdateProduct = async (req, res) => {
   try {
     let subCategory = req.body.productSubCategory;
 
-    // if (req.body.productSubCategory.includes(",")) {
-    //   // subCategory = req.body.productSubCategory.split(",");
-    // }
+    if (req.body.productSubCategory.includes(",")) {
+      subCategory = req.body.productSubCategory.split(",");
+    }
 
     const updateproduct = await Product.findByIdAndUpdate(
       req.params.id,
