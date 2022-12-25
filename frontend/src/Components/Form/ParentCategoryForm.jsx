@@ -1,13 +1,13 @@
 import { Button, CircularProgress, FormHelperText, Stack, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { AxiosRequest } from "../../Utils/DefaultAxios";
-
-export default function ParentCategoryForm() {
+import { FetchContext } from "../../Contexts/FeatchContext";
+export default function ParentCategoryForm({ setOpen }) {
   const [category, setCategory] = useState("");
   const [error, setError] = useState("");
   const [fieldValidation, setFieldValidation] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const { setRefetch, setNotify } = useContext(FetchContext);
   const validate = () => {
     if (category === "") {
       setFieldValidation("Category name is required");
@@ -24,10 +24,21 @@ export default function ParentCategoryForm() {
     if (validate()) {
       try {
         await AxiosRequest.post("/category", { categoryName: category });
+        setOpen(false);
         setLoading(false);
+        setNotify({
+          isOpen: true,
+          message: "New parent categeory successfuly added",
+          type: "success",
+        });
       } catch ({ response }) {
         setLoading(false);
         setError("Error -: " + response.data.error);
+        setNotify({
+          isOpen: true,
+          message: response.data.error,
+          type: "error",
+        });
       }
     }
   };
