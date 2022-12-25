@@ -16,6 +16,6 @@ router.route("/:parent/:sub").get(GetSubCategoryProducts);
 console.log("product route");
 router.route("/").post(Upload.single("productImage"), CreateProduct);
 router.use("/:id", CheckID);
-router.route("/:id").get(GetProductById).patch(Upload.single("productImage"), UpdateProduct).delete(DeleteProduct);
+router.route("/:id").get(GetProductById).put(Upload.single("productImage"), UpdateProduct).delete(DeleteProduct);
 
 module.exports = router;
