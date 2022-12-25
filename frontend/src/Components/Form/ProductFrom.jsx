@@ -1,4 +1,4 @@
-import { Box, Button, Chip, Container, FormControl, FormHelperText, Input, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Box, Button, Chip, CircularProgress, Container, FormControl, FormHelperText, Input, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { Stack } from "@mui/system";
 import React, { useState } from "react";
 import { AxiosRequest } from "../../Utils/DefaultAxios";
@@ -13,7 +13,7 @@ const initProduct = {
   productImage: "",
 };
 
-export default function ProductFrom({ setOpen }) {
+export default function ProductFrom({ setOpen, existingProduct }) {
   const [product, setProduct] = useState(initProduct);
   const [error, setErrors] = useState(false);
   const [image, setImage] = useState(null);
@@ -21,12 +21,19 @@ export default function ProductFrom({ setOpen }) {
   const [subCategoreies, setSubCategoreies] = useState();
   const [subOptionCategorey, setsubOptionCategorey] = useState([]);
   const [imageUrl, setImageUrl] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
       const { data } = await AxiosRequest.get("/category");
       setMainCategorey(data.data);
     })();
+
+    if (existingProduct) {
+      setProduct(existingProduct);
+      console.log(existingProduct.productSubCategory);
+      setsubOptionCategorey(existingProduct.productSubCategory);
+    }
   }, []);
 
   //handle input changes
@@ -73,6 +80,9 @@ export default function ProductFrom({ setOpen }) {
 
   //handle main categorey change
   const handleMainCategoreyChange = async (event) => {
+    if (existingProduct) {
+      const { data } = await AxiosRequest.get(`category/${event.target.value}/sub`);
+    }
     setProduct((prev) => ({
       ...prev,
       productCategory: event.target.value,
@@ -90,6 +100,7 @@ export default function ProductFrom({ setOpen }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (validate()) {
+      setLoading(true);
       const formData = new FormData();
       formData.append("productName", product.productName);
       formData.append("productPrice", product.productPrice);
@@ -98,28 +109,38 @@ export default function ProductFrom({ setOpen }) {
       formData.append("productSubCategory", subOptionCategorey);
       formData.append("productImage", product.productImage);
 
-      AxiosRequest.post("/product", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-        .then((response) => {
-          setOpen(false);
+      if (existingProduct) {
+        AxiosRequest.put(`/product/${existingProduct._id}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
+          .then((response) => {
+            setLoading(false);
 
-    // axios.post('/api/products', formData, {
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data',
-    //   },
-    // }).then((response) => {
-    //   console.log(response.data);
-    // }).catch((error) => {
-    //   console.error(error);
-    // });
+            setOpen(false);
+          })
+          .catch((error) => {
+            setLoading(false);
+            console.error(error);
+          });
+      } else {
+        AxiosRequest.post("/product", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+          .then((response) => {
+            setLoading(false);
+
+            setOpen(false);
+          })
+          .catch((error) => {
+            setLoading(false);
+            console.error(error);
+          });
+      }
+    }
   };
   return (
     <Container sx={{ mt: 2 }}>
@@ -216,12 +237,22 @@ export default function ProductFrom({ setOpen }) {
               />
               {error.productImage ? <FormHelperText error>{error.productImage}</FormHelperText> : null}
             </FormControl>
-            {imageUrl ? <img height="25%" width="100%" src={imageUrl} alt="Selected image" /> : null}
+            {imageUrl ? (
+              <img height="25%" width="100%" src={imageUrl} alt="Selected" />
+            ) : existingProduct ? (
+              <img height="25%" width="100%" src={`http://localhost:8000/images/${existingProduct.productImage}`} alt="Selected" />
+            ) : null}
           </div>
           <br />
-          <Button type="submit" variant="contained" color="primary">
-            Submit
-          </Button>
+          <Stack direction="row" sx={{ width: "100%" }} justifyContent="center" alignItems="center">
+            {!loading ? (
+              <Button type="submit" variant="contained" color="primary">
+                {existingProduct ? "Update" : "Add Product"}
+              </Button>
+            ) : (
+              <CircularProgress />
+            )}
+          </Stack>
         </Stack>
       </form>
     </Container>
