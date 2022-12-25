@@ -4,6 +4,8 @@ import { Box, CircularProgress, Container, Grid, Stack, Typography } from "@mui/
 import CustomCard from "../Components/Card/Card";
 import { useEffect } from "react";
 import { FetchContext } from "../Contexts/FeatchContext";
+import CustomSnackBar from "../Components/SnackBar/SnackBar";
+import { useState } from "react";
 
 function ShowError() {
   return (
@@ -38,9 +40,14 @@ function Spinner() {
 }
 
 export default function Home() {
-  const [products, setProduct] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(false);
+  const [products, setProduct] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [notify, setNotify] = useState({
+    isOpen: false,
+    message: "",
+    type: "error",
+    title: "",
+  });
   useEffect(() => {}, [products]);
   return (
     <>
@@ -48,13 +55,14 @@ export default function Home() {
         value={{
           setProduct,
           setLoading,
-          setError,
+          setNotify,
         }}
       >
         <ResponsiveDrawer />
         <Box sx={{ marginLeft: { sm: "240px" }, marginTop: "50px", display: "flex", justifyContent: "center", alignItems: "center", p: 2 }}>
           {loading ? <Spinner /> : <MiddleArea products={products} />}
         </Box>
+        <CustomSnackBar notify={notify} setNotify={setNotify} />
       </FetchContext.Provider>
     </>
   );
