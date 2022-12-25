@@ -11,7 +11,7 @@ const {
   DeleteProduct,
 } = require("../controller/prdouct.controller");
 
-router.route("/").get(GetParentCategoryProducts);
+router.route("/:parent").get(GetParentCategoryProducts);
 router.route("/:parent/:sub").get(GetSubCategoryProducts);
 console.log("product route");
 router.route("/").post(Upload.single("productImage"), CreateProduct);
