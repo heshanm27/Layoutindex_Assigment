@@ -3,16 +3,20 @@ import React, { useEffect, useState } from "react";
 import { AxiosRequest } from "../../Utils/DefaultAxios";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import { FetchContext } from "../../Contexts/FeatchContext";
+import { useContext } from "react";
 
-export default function DrawerContent({ setProduct }) {
+export default function DrawerContent() {
   const [categorIes, setCategories] = useState([]);
   const [openCategory, setOpenCategory] = useState("");
   const [filter, setFilter] = useState({});
   const [range, setRange] = useState();
+
+  const { setProduct } = useContext(FetchContext);
+
   const handleClick = async (id) => {
     setOpenCategory((prev) => (prev !== id ? id : ""));
-    const { data } = await AxiosRequest.get(`/product`);
-    console.log(data);
+    const { data } = await AxiosRequest.get(`/product/${id}`);
     setProduct(data.data);
   };
 
@@ -21,8 +25,8 @@ export default function DrawerContent({ setProduct }) {
     console.log(newValue);
   };
 
-  const hadnleClickSubCategory = (parentId, subcategorey) => {
-    const { data } = AxiosRequest.get(`/product/${parentId}/${subcategorey}`);
+  const hadnleClickSubCategory = async (parentId, subcategorey) => {
+    const { data } = await AxiosRequest.get(`/product/${parentId}/${subcategorey}`);
     setProduct(data.data);
   };
 
