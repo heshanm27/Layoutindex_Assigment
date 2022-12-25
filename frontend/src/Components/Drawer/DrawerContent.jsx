@@ -1,33 +1,54 @@
-import { Box, Collapse, Divider, Input, List, ListItem, ListItemButton, ListItemText, Radio, Slider, Toolbar, Typography } from "@mui/material";
+import { Box, Collapse, Divider, List, ListItemButton, ListItemText, Slider, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { AxiosRequest } from "../../Utils/DefaultAxios";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import { FetchContext } from "../../Contexts/FeatchContext";
 import { useContext } from "react";
-
+import { Stack } from "@mui/system";
+function valuetext(value) {
+  return `${value}°C`;
+}
 export default function DrawerContent() {
   const [categorIes, setCategories] = useState([]);
   const [openCategory, setOpenCategory] = useState("");
-  const [filter, setFilter] = useState({});
-  const [range, setRange] = useState();
 
-  const { setProduct } = useContext(FetchContext);
+  const [filter, setFilter] = useState([0, 60000]);
+
+  const { setProduct, setLoading } = useContext(FetchContext);
 
   const handleClick = async (id) => {
+    setLoading(true);
     setOpenCategory((prev) => (prev !== id ? id : ""));
-    const { data } = await AxiosRequest.get(`/product/${id}`);
-    setProduct(data.data);
+    try {
+      const { data } = await AxiosRequest.get(`/product/${id}`);
+      setProduct(data.data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
-  const handleRangeChange = (event, newValue) => {
-    setRange(newValue);
-    console.log(newValue);
+  const handleRangeChange = (event, newValue, activeThumb) => {
+    if (!Array.isArray(newValue)) {
+      return;
+    }
+    if (activeThumb === 0) {
+      setFilter([Math.min(newValue[0], filter[1] - 500), filter[1]]);
+    } else {
+      setFilter([filter[0], Math.max(newValue[1], filter[0] + 500)]);
+    }
   };
 
   const hadnleClickSubCategory = async (parentId, subcategorey) => {
-    const { data } = await AxiosRequest.get(`/product/${parentId}/${subcategorey}`);
-    setProduct(data.data);
+    setLoading(true);
+    try {
+      const { data } = await AxiosRequest.get(`/product/${parentId}/${subcategorey}`);
+      setProduct(data.data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -53,7 +74,7 @@ export default function DrawerContent() {
             <Box key={index}>
               <ListItemButton onClick={() => handleClick(category._id)}>
                 <ListItemText primary={category.categoryName} />
-                {category.sub.length !== 0 && openCategory ? <ExpandLess /> : <ExpandMore />}
+                {category?.sub?.length !== 0 && openCategory ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
               <Collapse in={openCategory === category._id} timeout="auto" unmountOnExit key={category._id + category.sub._id}>
                 <List component="ul">
@@ -70,7 +91,15 @@ export default function DrawerContent() {
       </List>
       <Divider />
       <Box sx={{ mt: 10 }}>
-        <input type="range" min="0" max="60000" value={range} onChange={handleRangeChange} />
+        <Stack direction="column" justifyContent={"center"} sx={{ p: 2 }}>
+          <Typography sx={{ mt: 2, mb: 2 }}>Price Filter</Typography>
+          <Stack direction="row" justifyContent={"space-between"}>
+            <span id="range-value-left">{"$" + filter[0]}</span>
+            <span id="range-value-right">{"$" + filter[1]} </span>
+          </Stack>
+
+          <Slider min={0} max={100000} value={filter} onChange={handleRangeChange} valueLabelDisplay="auto" getAriaValueText={valuetext} disableSwap />
+        </Stack>
       </Box>
     </Box>
   );
