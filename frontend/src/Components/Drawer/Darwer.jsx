@@ -2,22 +2,27 @@ import { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
+
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { Outlet } from "react-router";
-import { AxiosRequest } from "../../Utils/DefaultAxios";
-import { Button, Checkbox, FormControlLabel, Radio, RadioGroup, useTheme } from "@mui/material";
+
+import { Button, useTheme } from "@mui/material";
 import DrawerContent from "./DrawerContent";
+import CustomeDialog from "../Dialog/CustomDialog";
+import CategoryForm from "../Form/CategoryForm";
+import ProductFrom from "../Form/ProductFrom";
 
 const drawerWidth = 240;
 
 export default function ResponsiveDrawer({ setProduct }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const theme = useTheme();
+  const [openproductDialog, setOpenProductDialog] = useState(false);
+  const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -41,8 +46,12 @@ export default function ResponsiveDrawer({ setProduct }) {
             Layout Index
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "flex" } }}>
-            <Button sx={{ color: "white" }}>Manage Category</Button>
-            <Button sx={{ color: "white" }}>Manage Product</Button>
+            <Button sx={{ color: "white" }} onClick={() => setOpenCategoryDialog(true)}>
+              Manage Category
+            </Button>
+            <Button sx={{ color: "white" }} onClick={() => setOpenProductDialog(true)}>
+              Manage Product
+            </Button>
           </Box>
         </Toolbar>
       </AppBar>
@@ -62,10 +71,10 @@ export default function ResponsiveDrawer({ setProduct }) {
           }}
         >
           <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-            <DrawerContent setProduct />
+            <DrawerContent setProduct={setProduct} />
             <div>
-              <Button>Manage Category</Button>
-              <Button>Manage Product</Button>
+              <Button onClick={() => setOpenCategoryDialog(true)}>Manage Category</Button>
+              <Button onClick={() => setOpenProductDialog(true)}>Manage Product</Button>
             </div>
           </Box>
         </Drawer>
@@ -73,8 +82,10 @@ export default function ResponsiveDrawer({ setProduct }) {
         {/* Desktop Drawer */}
         <Drawer
           variant="permanent"
+          elevation={0}
           sx={{
             display: { xs: "none", sm: "block" },
+
             "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
           }}
           open
@@ -82,6 +93,13 @@ export default function ResponsiveDrawer({ setProduct }) {
           <DrawerContent setProduct={setProduct} />
         </Drawer>
       </Box>
+
+      <CustomeDialog title={"Add New Categorey"} open={openCategoryDialog} setOpen={setOpenCategoryDialog}>
+        <CategoryForm />
+      </CustomeDialog>
+      <CustomeDialog title={"Add New Product"} open={openproductDialog} setOpen={setOpenProductDialog}>
+        <ProductFrom />
+      </CustomeDialog>
     </Box>
   );
 }
