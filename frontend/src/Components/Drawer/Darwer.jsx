@@ -10,34 +10,16 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { Outlet } from "react-router";
 import { AxiosRequest } from "../../Utils/DefaultAxios";
-import { Checkbox, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Checkbox, FormControlLabel, Radio, RadioGroup, useTheme } from "@mui/material";
 import DrawerContent from "./DrawerContent";
 
 const drawerWidth = 240;
 
 export default function ResponsiveDrawer({ setProduct }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-
+  const theme = useTheme();
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
-  };
-  const [checked, setChecked] = useState([]);
-
-  const handleToggle = (value) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setChecked(newChecked);
-  };
-
-  const handleChange = (event) => {
-    setChecked(event.target.checked);
   };
 
   return (
@@ -45,12 +27,13 @@ export default function ResponsiveDrawer({ setProduct }) {
       <CssBaseline />
       <AppBar
         position="fixed"
+        elevation={0}
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
         }}
       >
-        <Toolbar>
+        <Toolbar sx={{ ...theme.mixins.toolbar }}>
           <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2, display: { sm: "none" } }}>
             <MenuIcon />
           </IconButton>
@@ -60,7 +43,7 @@ export default function ResponsiveDrawer({ setProduct }) {
         </Toolbar>
       </AppBar>
 
-      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }} aria-label="mailbox folders">
+      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 }, mt: 5 }} aria-label="mailbox folders">
         {/* Mobile Drawer */}
         <Drawer
           variant="temporary"
@@ -74,7 +57,7 @@ export default function ResponsiveDrawer({ setProduct }) {
             "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
           }}
         >
-          <DrawerContent />
+          <DrawerContent setProduct />
         </Drawer>
 
         {/* Desktop Drawer */}
@@ -86,7 +69,7 @@ export default function ResponsiveDrawer({ setProduct }) {
           }}
           open
         >
-          <DrawerContent />
+          <DrawerContent setProduct={setProduct} />
         </Drawer>
       </Box>
     </Box>
