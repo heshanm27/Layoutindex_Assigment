@@ -4,6 +4,7 @@ const app = express();
 const cors = require("cors");
 const DBConnetion = require("./config/db.config");
 const mongoose = require("mongoose");
+const path = require("path");
 
 require("express-async-errors");
 //sss
@@ -39,6 +40,9 @@ const StartServer = function () {
     res.status(200).json({ msg: "Welcome to the API" });
   });
 
+  /**Static Route */
+  const __dirname = path.resolve();
+  app.use("/images", express.static(path.join(__dirname, "src/uploads")));
   /** Api routes */
 
   app.use("/api/category", require("./routes/category.route"));
