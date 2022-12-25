@@ -1,4 +1,4 @@
-import { Box, Collapse, Divider, List, ListItem, ListItemButton, ListItemText, Radio, Toolbar } from "@mui/material";
+import { Box, Collapse, Divider, Input, List, ListItem, ListItemButton, ListItemText, Radio, Slider, Toolbar, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { AxiosRequest } from "../../Utils/DefaultAxios";
 import ExpandLess from "@mui/icons-material/ExpandLess";
@@ -7,12 +7,18 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 export default function DrawerContent({ setProduct }) {
   const [categorIes, setCategories] = useState([]);
   const [openCategory, setOpenCategory] = useState("");
-
+  const [filter, setFilter] = useState({});
+  const [range, setRange] = useState();
   const handleClick = async (id) => {
     setOpenCategory((prev) => (prev !== id ? id : ""));
     const { data } = await AxiosRequest.get(`/product`);
     console.log(data);
     setProduct(data.data);
+  };
+
+  const handleRangeChange = (event, newValue) => {
+    setRange(newValue);
+    console.log(newValue);
   };
 
   const hadnleClickSubCategory = (aprentId, subId) => {
@@ -32,8 +38,9 @@ export default function DrawerContent({ setProduct }) {
   }, []);
 
   return (
-    <div>
-      <Toolbar />
+    <Box sx={{ p: 2 }}>
+      <Divider />
+      <Typography sx={{ color: "gray", fontSize: 16, p: 2 }}>Category</Typography>
       <Divider />
       <List key={5}>
         {categorIes &&
@@ -57,6 +64,9 @@ export default function DrawerContent({ setProduct }) {
           ))}
       </List>
       <Divider />
-    </div>
+      <Box sx={{ mt: 10 }}>
+        <input type="range" min="0" max="60000" value={range} onChange={handleRangeChange} />
+      </Box>
+    </Box>
   );
 }
