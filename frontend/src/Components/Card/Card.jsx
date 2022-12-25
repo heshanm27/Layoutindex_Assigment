@@ -22,12 +22,12 @@ export default function CustomCard({ item }) {
           <Typography sx={{ fontSize: 24 }} color="text.secondary" gutterBottom>
             {item.productName}
           </Typography>
-          <Typography sx={{ fontSize: 14 }} component="div">
-            {item.productDescription}
-          </Typography>
-          <br />
+
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            {formatter.format(item.productPrice)}
+            {`Price -: ${formatter.format(item.productPrice)}`}
+          </Typography>
+          <Typography sx={{ fontSize: 14, mb: 1.5 }} component="div">
+            {item.productDescription}
           </Typography>
         </CardContent>
       </CardActionArea>
