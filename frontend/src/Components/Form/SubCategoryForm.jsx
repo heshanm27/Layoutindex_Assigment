@@ -68,9 +68,9 @@ function AddSubCategorey({ category, handleSubCategoreyChange, subCategoreies, s
 
 export default function SubCategoryForm({ setOpen }) {
   const [category, setCategory] = useState("");
-  const [categoryName, setCategoryName] = useState("");
+  const [categoryError, setCategoryError] = useState("");
+  const [subCategoryName, setSubCategoryName] = useState("");
   const [mainCategories, setMainCategoreies] = useState([]);
-  const [error, setError] = useState("");
   const [checkChoose, setCheckChoose] = useState(true);
   const [fieldValidation, setFieldValidation] = useState("");
   const [subOptionCategorey, setsubOptionCategorey] = useState([]);
@@ -86,7 +86,7 @@ export default function SubCategoryForm({ setOpen }) {
   };
 
   const validate = () => {
-    if (categoryName === "") {
+    if (subCategoryName === "") {
       setFieldValidation("Enter category name");
       return false;
     }
@@ -102,56 +102,80 @@ export default function SubCategoryForm({ setOpen }) {
     setSelectValidation("");
     return true;
   };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(selectValidate());
-    setLoading(true);
-    if (checkChoose && validate()) {
-      try {
-        await AxiosRequest.post(`/category/${category}`, {
-          categoryName,
-        });
-        setNotify({
-          isOpen: true,
-          message: "New sub categeory successfuly added",
-          type: "success",
-        });
-        setLoading(false);
-        setOpen(false);
-      } catch ({ response }) {
-        setLoading(false);
-        setNotify({
-          isOpen: true,
-          message: response.data.error,
-          type: "error",
-        });
-      }
-    } else {
-      if (selectValidate()) {
-        try {
-          await AxiosRequest.patch(`/category/${category}`, {
-            subOptionCategorey: subIds,
-          });
-          setOpen(false);
-          setNotify({
-            isOpen: true,
-            message: "New sub categeories successfuly added",
-            type: "success",
-          });
-          setLoading(false);
-        } catch ({ response }) {
-          setNotify({
-            isOpen: true,
-            message: response.data.error,
-            type: "error",
-          });
-          setLoading(false);
-        }
-      }
+
+  const validateParentSelect = () => {
+    if (category === "") {
+      setCategoryError("Please select parent category");
+      return false;
+    }
+    setCategoryError("");
+    return true;
+  };
+  const handleNewSubCategorey = async () => {
+    try {
+      await AxiosRequest.post(`/category/${category}`, {
+        categoryName: subCategoryName,
+      });
+      setNotify({
+        isOpen: true,
+        message: "New sub categeory successfuly added",
+        type: "success",
+      });
+      setLoading(false);
+      setOpen(false);
+    } catch ({ response }) {
+      setLoading(false);
+      setNotify({
+        isOpen: true,
+        message: response.data.error,
+        type: "error",
+      });
     }
   };
-  const handleSelect = (e) => {
-    setCategory(e.target.value);
+
+  const handleAddSubCategorey = async () => {
+    try {
+      await AxiosRequest.patch(`/category/${category}`, {
+        subOptionCategorey: subIds,
+      });
+      setOpen(false);
+      setNotify({
+        isOpen: true,
+        message: "New sub categeories successfuly added",
+        type: "success",
+      });
+      setLoading(false);
+    } catch ({ response }) {
+      setNotify({
+        isOpen: true,
+        message: response.data.error,
+        type: "error",
+      });
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+    if (!validateParentSelect()) {
+      setLoading(false);
+      return;
+    }
+    if (checkChoose && validate()) {
+      console.log("new sub categorey");
+      await handleNewSubCategorey();
+      return;
+    }
+
+    if (!checkChoose && selectValidate()) {
+      console.log("add sub categorey");
+      await handleAddSubCategorey();
+      return;
+    }
+
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -184,12 +208,13 @@ export default function SubCategoryForm({ setOpen }) {
       }
     })();
   }, []);
+
   return (
     <Stack direction="column" spacing={2} sx={{ mt: 5 }}>
       <form onSubmit={handleSubmit}>
         <FormControl fullWidth sx={{ mb: 5 }}>
           <InputLabel id="category-label">Main Category</InputLabel>
-          <Select name="productCategory" labelId="category-label" value={category} onChange={handleSelect}>
+          <Select name="productCategory" labelId="category-label" value={category} onChange={(e) => setCategory(e.target.value)}>
             {mainCategories &&
               mainCategories.map((item) => (
                 <MenuItem key={item._id} value={item._id}>
@@ -197,14 +222,14 @@ export default function SubCategoryForm({ setOpen }) {
                 </MenuItem>
               ))}
           </Select>
-          {error.productCategory && <FormHelperText error>{error.productCategory}</FormHelperText>}
+          {categoryError && <FormHelperText error>{categoryError}</FormHelperText>}
         </FormControl>
 
         <Stack direction="row" justifyContent="start" alignItems="center">
-          Create new sub categorey <Checkbox value={checkChoose} onChange={(e) => setCheckChoose((prev) => !prev)} />
+          Add sub categories to existing parent category <Checkbox value={checkChoose} onChange={(e) => setCheckChoose((prev) => !prev)} />
         </Stack>
 
-        {checkChoose ? (
+        {!checkChoose ? (
           <AddSubCategorey
             category={category}
             subOptionCategorey={subOptionCategorey}
@@ -213,7 +238,7 @@ export default function SubCategoryForm({ setOpen }) {
             selectValidation={selectValidation}
           />
         ) : (
-          <CreateSubCategorey subCategory={categoryName} category={category} fieldValidation={fieldValidation} setCategoryName={setCategoryName} />
+          <CreateSubCategorey subCategory={subCategoryName} category={category} fieldValidation={fieldValidation} setCategoryName={setSubCategoryName} />
         )}
 
         <Stack direction="row" justifyContent="center" sx={{ mt: 5 }}>
