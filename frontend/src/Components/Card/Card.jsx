@@ -11,7 +11,7 @@ export default function CustomCard({ item }) {
   const [openproductDialog, setOpenProductDialog] = React.useState(false);
 
   return (
-    <Card sx={{ width: 285 }}>
+    <Card sx={{ width: 285, height: 550 }}>
       <CardActionArea onClick={() => setOpenProductDialog(true)}>
         <CardMedia
           component="img"
@@ -29,7 +29,7 @@ export default function CustomCard({ item }) {
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
             {`Price -: ${formatter.format(item.productPrice)}`}
           </Typography>
-          <Typography sx={{ fontSize: 14, mb: 1.5 }} component="div">
+          <Typography sx={{ fontSize: 14, mb: 1.5, textOverflow: "ellipsis", overflow: "hidden", height: "120px" }} component="div">
             {item.productDescription}
           </Typography>
         </CardContent>
