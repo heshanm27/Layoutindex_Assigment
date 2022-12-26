@@ -105,7 +105,7 @@ const CreateSubCategory = async (req, res) => {
     const newSubCategory = await subCategory.save();
 
     //update parent sub categories
-    parentCategory.productSubCategory.push(newSubCategory.categoryName);
+    parentCategory.sub.push(newSubCategory.categoryName);
 
     await parentCategory.save();
 
