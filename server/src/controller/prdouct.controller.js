@@ -1,8 +1,9 @@
 const Product = require("../model/product.model");
 const CustomError = require("../error/custom.error.js");
 
+//get all products from one parent category
 const GetParentCategoryProducts = async (req, res) => {
-  console.log("parent", req.params.parent);
+  //if there is min or max query filter products by price
   if (req.query.min || req.query.max) {
     const products = await Product.find({
       productPrice: { $gte: req.query.min, $lte: req.query.max },
@@ -27,7 +28,9 @@ const GetParentCategoryProducts = async (req, res) => {
   });
 };
 
+//get all products from one sub category
 const GetSubCategoryProducts = async (req, res) => {
+  //if there is min or max query filter products by price
   if (req.query.min || req.query.max) {
     const products = await Product.find({
       productPrice: { $gte: req.query.min, $lte: req.query.max },
@@ -40,8 +43,7 @@ const GetSubCategoryProducts = async (req, res) => {
       data: products,
     });
   }
-  console.log("parent", req.params.parent);
-  console.log("sub", req.params.sub);
+
   const products = await Product.find({
     $and: [{ productCategory: req.params.parent }, { productSubCategory: req.params.sub }],
   });
@@ -53,6 +55,7 @@ const GetSubCategoryProducts = async (req, res) => {
   });
 };
 
+//get one product by id
 const GetProductById = async (req, res) => {
   const reservedProduct = await Product.findById(req.params.id);
 
@@ -63,14 +66,15 @@ const GetProductById = async (req, res) => {
   });
 };
 
+//create new product
 const CreateProduct = async (req, res) => {
   if (!req.body) return res.status(400).json({ error: "Product data is required" });
   if (!req.file) return res.status(400).json({ error: "Image is required" });
   console.log(req.body.productCategory);
-  // console.log(JSON.parse(req.body.productCategory));
 
   let subCategory = req.body.productSubCategory;
 
+  //if there is more than one sub category split it and save it as array
   if (req.body.productSubCategory.includes(",")) {
     subCategory = req.body.productSubCategory.split(",");
   }
@@ -98,12 +102,14 @@ const CreateProduct = async (req, res) => {
   }
 };
 
+//update product details
 const UpdateProduct = async (req, res) => {
   if (!req.body) return res.status(400).json({ error: "Product data is required" });
 
   try {
     let subCategory = req.body.productSubCategory;
 
+    //if there is more than one sub category split it and save it as array
     if (req.body.productSubCategory.includes(",")) {
       subCategory = req.body.productSubCategory.split(",");
     }
@@ -131,6 +137,7 @@ const UpdateProduct = async (req, res) => {
   }
 };
 
+//delete product
 const DeleteProduct = async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
