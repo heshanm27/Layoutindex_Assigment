@@ -16,7 +16,7 @@ export default function DrawerContent() {
   });
   const [refetch, setRefetch] = useState(false);
 
-  const [filter, setFilter] = useState([0, 60000]);
+  const [filter, setFilter] = useState([0, 10000]);
 
   const { setProduct, setLoading, setNotify } = useContext(FetchContext);
 
@@ -160,7 +160,7 @@ export default function DrawerContent() {
             <span id="range-value-right">{"$" + filter[1]} </span>
           </Stack>
 
-          <Slider min={0} max={100000} value={filter} onChange={handleRangeChange} disableSwap />
+          <Slider min={0} max={10000} value={filter} onChange={handleRangeChange} disableSwap />
         </Stack>
       </Box>
     </Box>
