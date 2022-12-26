@@ -41,6 +41,7 @@ export default function ParentCategoryForm({ setOpen }) {
         });
       }
     }
+    setLoading(false);
   };
   return (
     <Stack direction="column" spacing={2} sx={{ mt: 5 }}>
