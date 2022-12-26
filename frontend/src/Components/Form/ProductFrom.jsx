@@ -14,7 +14,7 @@ const initProduct = {
 };
 
 export default function ProductFrom({ setOpen, existingProduct }) {
-  const { setRefetch, setNotify } = useContext(FetchContext);
+  const { setNotify } = useContext(FetchContext);
   const [product, setProduct] = useState(initProduct);
   const [error, setErrors] = useState(false);
   const [image, setImage] = useState(null);
@@ -121,12 +121,20 @@ export default function ProductFrom({ setOpen, existingProduct }) {
         })
           .then((response) => {
             setLoading(false);
-            setRefetch((prev) => !prev);
+            setNotify({
+              isOpen: true,
+              message: "Product updated successfuly",
+              type: "success",
+            });
             setOpen(false);
           })
-          .catch((error) => {
+          .catch((response) => {
             setLoading(false);
-            console.error(error);
+            setNotify({
+              isOpen: true,
+              message: response.data.error,
+              type: "error",
+            });
           });
       } else {
         AxiosRequest.post("/product", formData, {
