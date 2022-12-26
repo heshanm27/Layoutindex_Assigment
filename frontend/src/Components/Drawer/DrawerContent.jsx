@@ -1,11 +1,9 @@
-import { Box, Collapse, Divider, List, ListItemButton, ListItemText, Slider, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Box, Collapse, Divider, List, ListItemButton, ListItemText, Slider, Typography, Stack } from "@mui/material";
+import React, { useEffect, useState, useContext } from "react";
 import { AxiosRequest } from "../../Utils/DefaultAxios";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import { FetchContext } from "../../Contexts/FeatchContext";
-import { useContext } from "react";
-import { Stack } from "@mui/system";
 
 export default function DrawerContent() {
   const [categorIes, setCategories] = useState([]);
@@ -14,11 +12,10 @@ export default function DrawerContent() {
     parent: "",
     sub: "",
   });
-  const [refetch, setRefetch] = useState(false);
 
   const [filter, setFilter] = useState([0, 10000]);
 
-  const { setProduct, setLoading, setNotify } = useContext(FetchContext);
+  const { setProduct, setLoading, setNotify, notify } = useContext(FetchContext);
 
   const handleClick = async (id) => {
     setCurrentCategory({
@@ -123,7 +120,7 @@ export default function DrawerContent() {
         });
       }
     })();
-  }, [refetch]);
+  }, [notify]);
 
   return (
     <Box sx={{ p: 2 }}>
@@ -133,7 +130,7 @@ export default function DrawerContent() {
       <List key={5}>
         {categorIes &&
           categorIes.map((category, index) => (
-            <Box key={index}>
+            <Box key={index + 1}>
               <ListItemButton onClick={() => handleClick(category._id)}>
                 <ListItemText primary={category.categoryName} />
                 {category?.sub?.length !== 0 && openCategory ? <ExpandLess /> : <ExpandMore />}
@@ -155,6 +152,7 @@ export default function DrawerContent() {
       <Box sx={{ mt: 2 }}>
         <Stack direction="column" justifyContent={"center"} sx={{ p: 2 }}>
           <Typography sx={{ mt: 2, mb: 2 }}>Price Filter</Typography>
+          <Divider />
           <Stack direction="row" justifyContent={"space-between"}>
             <span id="range-value-left">{"$" + filter[0]}</span>
             <span id="range-value-right">{"$" + filter[1]} </span>

@@ -1,4 +1,3 @@
-import React from "react";
 import ResponsiveDrawer from "../Components/Drawer/Darwer";
 import { Box, CircularProgress, Grid, Stack, Typography } from "@mui/material";
 import CustomCard from "../Components/Card/Card";
@@ -47,7 +46,7 @@ export default function Home() {
     type: "error",
     title: "",
   });
-  useEffect(() => {}, [products]);
+
   return (
     <>
       <FetchContext.Provider
@@ -55,6 +54,7 @@ export default function Home() {
           setProduct,
           setLoading,
           setNotify,
+          notify,
         }}
       >
         <ResponsiveDrawer />

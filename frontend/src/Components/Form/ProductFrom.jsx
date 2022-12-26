@@ -17,7 +17,6 @@ export default function ProductFrom({ setOpen, existingProduct }) {
   const { setNotify } = useContext(FetchContext);
   const [product, setProduct] = useState(initProduct);
   const [error, setErrors] = useState(false);
-  const [image, setImage] = useState(null);
   const [mainCategorey, setMainCategorey] = useState([]);
   const [subCategoreies, setSubCategoreies] = useState();
   const [subOptionCategorey, setsubOptionCategorey] = useState([]);
@@ -33,9 +32,7 @@ export default function ProductFrom({ setOpen, existingProduct }) {
     //set existing product values to update
     if (existingProduct) {
       setProduct(existingProduct);
-      console.log(existingProduct.productSubCategory);
       setsubOptionCategorey(existingProduct.productSubCategory);
-
       (async () => {
         const { data } = await AxiosRequest.get(`category/${existingProduct.productCategory}/sub`);
         setSubCategoreies(data.data.sub);
@@ -71,7 +68,6 @@ export default function ProductFrom({ setOpen, existingProduct }) {
   //handle image change
   const handleImageChange = (event) => {
     const file = event.target.files[0];
-    // setImage(file);
 
     setProduct((prev) => ({
       ...prev,
@@ -165,7 +161,7 @@ export default function ProductFrom({ setOpen, existingProduct }) {
   };
   return (
     <Container sx={{ mt: 2 }}>
-      <form enctype="multipart/form-data" onSubmit={handleSubmit}>
+      <form encType="multipart/form-data" onSubmit={handleSubmit}>
         <Stack direction="column" spacing={2}>
           <FormControl>
             <TextField

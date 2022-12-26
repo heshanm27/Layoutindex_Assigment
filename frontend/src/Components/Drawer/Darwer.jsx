@@ -9,7 +9,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
-import { Button, useTheme } from "@mui/material";
+import { Button, Divider, useTheme } from "@mui/material";
 import DrawerContent from "./DrawerContent";
 import CustomeDialog from "../Dialog/CustomDialog";
 import CategoryForm from "../Form/SubCategoryForm";
@@ -73,10 +73,13 @@ export default function ResponsiveDrawer() {
         >
           <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <DrawerContent />
-            <div>
+
+            <Box sx={{ p: 2 }}>
+              <Typography align="left">Actions</Typography>
+              <Divider />
               <Button onClick={() => setOpenCategoryDialog(true)}>Manage Category</Button>
               <Button onClick={() => setOpenProductDialog(true)}>Manage Product</Button>
-            </div>
+            </Box>
           </Box>
         </Drawer>
 

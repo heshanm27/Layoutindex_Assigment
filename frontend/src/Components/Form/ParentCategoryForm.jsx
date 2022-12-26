@@ -7,7 +7,7 @@ export default function ParentCategoryForm({ setOpen }) {
   const [error, setError] = useState("");
   const [fieldValidation, setFieldValidation] = useState("");
   const [loading, setLoading] = useState(false);
-  const { setRefetch, setNotify } = useContext(FetchContext);
+  const { setNotify } = useContext(FetchContext);
   const validate = () => {
     if (category === "") {
       setFieldValidation("Category name is required");
