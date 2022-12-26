@@ -1,8 +1,10 @@
 const Category = require("../model/category.model");
 const CustomError = require("../error/custom.error.js");
 
+//get all parent  categories
 const GetAllCategories = async (req, res) => {
   try {
+    //find categories that parent is null and return id and category name
     const categories = await Category.find({
       parent: null,
     })
@@ -18,8 +20,10 @@ const GetAllCategories = async (req, res) => {
   }
 };
 
+//get sub categories in one parent category
 const GetSubCategories = async (req, res) => {
   try {
+    //find sub categories and return id and category name
     const categories = await Category.findOne(
       {
         $or: [{ _id: req.params.id }, { categoryName: req.params.id }],
@@ -50,6 +54,7 @@ const GetSubCategories = async (req, res) => {
 
 const GetAllSubCategories = async (req, res) => {
   try {
+    //find sub categories filtering that aprent is null
     const categories = await Category.find({
       parent: { $ne: null },
     }).exec();
@@ -125,12 +130,14 @@ const CreateSubCategory = async (req, res) => {
   }
 };
 
+//update parent category
 const UpdateCategory = async (req, res) => {
   try {
     const category = await Category.find({ _id: req.params.id }).exec();
 
     if (!category) throw new CustomError("Category not found", 404);
 
+    //find and update category
     const updatedCategory = await Category.findByIdAndUpdate(
       req.params.id,
       {
