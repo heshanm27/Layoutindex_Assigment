@@ -4,8 +4,10 @@ import { AxiosRequest } from "../../Utils/DefaultAxios";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import { FetchContext } from "../../Contexts/FeatchContext";
+import useDebounce from "../../Utils/useDebounce";
 
 export default function DrawerContent() {
+  const debounce = useDebounce();
   const [categorIes, setCategories] = useState([]);
   const [openCategory, setOpenCategory] = useState("");
   const [curruntCategory, setCurrentCategory] = useState({
@@ -45,14 +47,15 @@ export default function DrawerContent() {
     if (!Array.isArray(newValue)) {
       return;
     }
+
     if (activeThumb === 0) {
-      setFilter([Math.min(newValue[0], filter[1] - 500), filter[1]]);
+      setFilter([Math.min(newValue[0], filter[1] - 200), filter[1]]);
     } else {
-      setFilter([filter[0], Math.max(newValue[1], filter[0] + 500)]);
+      setFilter([filter[0], Math.max(newValue[1], filter[0] + 200)]);
     }
 
     if (curruntCategory.sub !== "") {
-      setTimeout(async () => {
+      debounce(async () => {
         try {
           const { data } = await AxiosRequest.get(`/product/${curruntCategory.parent}/${curruntCategory.sub}?min=${filter[0]}&max=${filter[1]} `);
           setProduct(data.data);
@@ -65,9 +68,9 @@ export default function DrawerContent() {
             type: "error",
           });
         }
-      }, [200]);
+      });
     } else {
-      setTimeout(async () => {
+      debounce(async () => {
         try {
           const { data } = await AxiosRequest.get(`/product/${curruntCategory.parent}?min=${filter[0]}&max=${filter[1]} `);
           setProduct(data.data);
@@ -80,7 +83,7 @@ export default function DrawerContent() {
             type: "error",
           });
         }
-      }, [100]);
+      });
     }
   };
 

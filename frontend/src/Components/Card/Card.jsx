@@ -2,6 +2,7 @@ import { Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/m
 import React from "react";
 import CustomeDialog from "../Dialog/CustomDialog";
 import ProductFrom from "../Form/ProductFrom";
+import { Box } from "@mui/system";
 
 export default function CustomCard({ item }) {
   const formatter = new Intl.NumberFormat("en-US", {
@@ -22,16 +23,19 @@ export default function CustomCard({ item }) {
           alt="Paella dish"
         />
         <CardContent>
-          <Typography sx={{ fontSize: 24 }} color="text.secondary" gutterBottom>
-            {item.productName}
-          </Typography>
-
+          <Box sx={{ maxHeight: "150px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: "3", WebkitBoxOrient: "vertical" }}>
+            <Typography sx={{ fontSize: 24 }} color="text.secondary" gutterBottom>
+              {item.productName}
+            </Typography>
+          </Box>
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
             {`Price -: ${formatter.format(item.productPrice)}`}
           </Typography>
-          <Typography sx={{ fontSize: 14, mb: 1.5, textOverflow: "ellipsis", overflow: "hidden", height: "120px" }} component="div">
-            {item.productDescription}
-          </Typography>
+          <Box sx={{ maxHeight: "150px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: "7", WebkitBoxOrient: "vertical" }}>
+            <Typography paragraph sx={{ fontSize: 14, mb: 1.5 }} component="div">
+              {item.productDescription}
+            </Typography>
+          </Box>
         </CardContent>
       </CardActionArea>
 

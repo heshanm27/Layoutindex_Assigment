@@ -51,7 +51,7 @@ Database : MongoDB<br/>
 
 > server Setup
 
-- `cd server `(Change directory to the frontend folder)
+- `cd server `(Change directory to the frontend folder )
 
 - `npm install` (Install all the npm packages)
 
